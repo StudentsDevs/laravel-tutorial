@@ -1,12 +1,20 @@
-Laravel own docs ->understanding 
+# Laravel own docs ->understanding 
 
 (Laravel herd, laragon, vs code)
 
--> Laravel set-up
-run this command to create new Laravel project (currently using herd and laragon(MySQL database):
+## Laravel set-up
+    run this command to create new Laravel project
+     (currently using herd and laragon(MySQL database):
+
 	-- laravel new appname
 	-- choose desired set-up (i use none on this setup)
-
+    
+<img src="docs/readme.images/1.png" >
+<img src="docs/readme.images/2.png" >
+<img src="docs/readme.images/3.png" >
+<img src="docs/readme.images/4.png" >
+<img src="docs/readme.images/5.png" >
+<img src="docs/readme.images/6.png" >
 -> Set-up and migrate database (laragon) 
 	1) should have in .env
 
@@ -51,7 +59,7 @@ run this command to create new Laravel project (currently using herd and laragon
 	-- to check for routes run
 	   php artisan route:list
 
-->Layouts
+## Layouts
 	-- is like a component where you can import and use in other files
 	-- create folder inside view named layouts
 	-- create a file app.blade.php
@@ -83,7 +91,7 @@ run this command to create new Laravel project (currently using herd and laragon
     	   <h1>Welcome to Laravel</h1>
 	@endsection
 
--> Passing data from controller to pages
+## Passing data from controller to pages
 	--initialize a variable
 	$title = 'this is a title'
 	
