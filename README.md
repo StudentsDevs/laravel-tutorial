@@ -1,6 +1,4 @@
-Laravel own docs ->understanding (Progress) 
-
-note: update this everytime you add progress
+Laravel own docs ->understanding 
 
 (Laravel herd, laragon, vs code)
 
@@ -122,12 +120,12 @@ run this command to create new Laravel project (currently using herd and laragon
 	@endsection
 	
 	
--> Adding Navigation bar
+### Adding Navigation bar
 	-- create a folder views/includes
 	-- create a file navbar.blade.php
 	-- on app.blade.php add @include('includes.navbar') on the top of the div of the contents
 
--> Models and Database Migration
+### Models and Database Migration
 	-- create a PostController 
 	-- run this: php artisan make:controller PostController --resource
 	-- create a model 
@@ -144,7 +142,7 @@ run this command to create new Laravel project (currently using herd and laragon
 	    Schema::defaultStringLength(191);
 	-- then run php artisan migrate
 
--> Adding data using Tinker
+### Adding data using Tinker
 	-- php artisan tinker
 	-- create a variable
 	   $post = new App\Models\Post
@@ -156,7 +154,7 @@ run this command to create new Laravel project (currently using herd and laragon
 	   $post->save()
 	-- check database if data are added
 
--> Adding routes the easy way
+### Adding routes the easy way
 	-- instead of initializing routes individually use this
 	   //import the path first
 	   use App\Http\Controllers\PostController;
@@ -166,19 +164,19 @@ run this command to create new Laravel project (currently using herd and laragon
 	   php artisan route:list
 	   
 
--> Getting data from the database using Eloquent
+### Getting data from the database using Eloquent
 	-- getting all the data of the table
            $posts =  Post::all();
 	-- getting data in order
 	   $ascOrder = Post::orderBy('title', 'desc')->get();
 	-- getting data using where clause
 	   $getUsingWhere = Post::where('table_entity_name', 'condition');
--> Using MySQL query
+### Using MySQL query
 	-- import
 	   use Illuminate\Support\Facades\DB;
 	   //$posts = DB::select('SELECT * FROM  posts');
 	-- Eloquent is much recommended and cleaner
--> Pagination
+### Pagination
 	-- limits on how many will show per page 
 	-- on PostController
 	   $posts = Post::orderBy('title', 'desc')->paginate(1);
