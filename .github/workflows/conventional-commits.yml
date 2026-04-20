@@ -1,0 +1,63 @@
+name: Conventional Commits Validation
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  push:
+    branches:
+      - main
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install commitlint
+        run: |
+          npm install --save-dev @commitlint/config-conventional @commitlint/cli
+
+      - name: Validate PR commits
+        if: github.event_name == 'pull_request'
+        run: |
+          npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
+
+      - name: Validate push commits
+        if: github.event_name == 'push'
+        run: |
+          npx commitlint --from ${{ github.event.before }} --to ${{ github.event.after }}
+
+  commit-message-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commit format (Alternative check)
+        run: |
+          # Get all commits in the PR or push
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            COMMITS=$(git log ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} --format=%B)
+          else
+            COMMITS=$(git log ${{ github.event.before }}..${{ github.event.after }} --format=%B)
+          fi
+          
+          # Valid types for conventional commits
+          VALID_TYPES="feat|fix|docs|style|refactor|perf|test|chore|ci|revert"
+          
+          echo "Checking commit messages..."
+          
+          while IFS= read -r commit_msg; do
+            if [ ! -z "$commit_msg" ]; then
+              if ! echo "$commit_msg" | grep -E "^($VALID_TYPES)(\(.+\))?!?: .{1,}$" > /dev/null; then
+                echo "❌ Invalid commit message format: $commit_msg"
+                echo "Must follow: <type>(<scope>)?: <subject>"
+                exit 1
+              fi
+            fi
+          done <<< "$COMMITS"
+          
+          echo "✅ All commits follow conventional commit format!"
