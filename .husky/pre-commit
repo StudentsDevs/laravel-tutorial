@@ -1,0 +1,71 @@
+#!/bin/sh
+# Pre-commit hook to check for common errors before committing
+
+echo "🔍 Running pre-commit checks..."
+echo ""
+
+ERRORS=0
+
+# Check for dd() statements
+echo "Checking for debug statements (dd/dump)..."
+if git diff --cached --name-only --diff-filter=ACM | grep "\.php$" > /dev/null; then
+  if git diff --cached --name-only --diff-filter=ACM -- "*.php" | xargs grep -l "dd(" 2>/dev/null; then
+    echo " ERROR: Found dd() statements in staged files!"
+    ERRORS=$((ERRORS+1))
+  fi
+  
+  if git diff --cached --name-only --diff-filter=ACM -- "*.php" | xargs grep -l "dump(" 2>/dev/null; then
+    echo "ERROR: Found dump() statements in staged files!"
+    ERRORS=$((ERRORS+1))
+  fi
+fi
+
+echo " Debug check passed"
+echo ""
+
+# Check for console.log in JS files
+echo "Checking for console.log in JavaScript..."
+if git diff --cached --name-only --diff-filter=ACM | grep "\.js$" > /dev/null; then
+  if git diff --cached --name-only --diff-filter=ACM -- "*.js" | xargs grep -l "console\.log" 2>/dev/null; then
+    echo "  WARNING: Found console.log statements in staged JS files"
+    echo "   (This is a warning, commit will proceed)"
+  fi
+fi
+
+echo " Console check completed"
+echo ""
+
+# Check PHP syntax for staged PHP files
+echo "Checking PHP syntax..."
+if git diff --cached --name-only --diff-filter=ACM | grep "\.php$" > /dev/null; then
+  git diff --cached --name-only --diff-filter=ACM -- "*.php" | while read FILE; do
+    if [ -f "$FILE" ]; then
+      php -l "$FILE" > /dev/null 2>&1
+      if [ $? -ne 0 ]; then
+        echo " ERROR: PHP syntax error in $FILE"
+        php -l "$FILE"
+        ERRORS=$((ERRORS+1))
+      fi
+    fi
+  done
+fi
+
+echo " PHP syntax check passed"
+echo ""
+
+# If critical errors found, prevent commit
+if [ $ERRORS -gt 0 ]; then
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo " COMMIT BLOCKED: $ERRORS critical error(s) found"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "Fix the errors above and try again."
+  echo ""
+  echo "To skip this hook (NOT RECOMMENDED):"
+  echo "  git commit --no-verify"
+  echo ""
+  exit 1
+fi
+
+echo " All pre-commit checks passed!"
+exit 0
