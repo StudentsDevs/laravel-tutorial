@@ -4,7 +4,7 @@
 
 remote="$1"
 url="$2"
-
+#dasdasdd
 # Get current branch
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
