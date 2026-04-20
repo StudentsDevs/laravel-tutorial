@@ -1,5 +1,5 @@
 # Laravel own docs ->understanding 
-
+    note: update this everytime you make progress
 (Laravel herd, laragon, vs code)
 
 ## Laravel set-up
